@@ -1,3 +1,4 @@
+// MODIFIED
 #include "mbed.h"
 
 #define PERIOD 1000
@@ -6,22 +7,30 @@
 #define BACK 2
 #define LEFT 3
 #define RIGHT 4
+
+//Diagonal Motor
 #define DFR 5
 #define DBR 6
 #define DFL 7
 #define DBL 8
 
+//Motors
 #define BR 1
 #define BL 2
 #define FL 3
 #define FR 4
 
+//Wings Servo Values
 #define LEFTWINGDOWN 1950
 #define LEFTWINGUP 900
 #define RIGHTWINGDOWN 900
 #define RIGHTWINGUP 1850
+
+//Flag Servo Values
 #define FLAGDOWN 1780
 #define FLAGUP 800
+
+//Head Servo Values
 #define PENISUP 1950
 #define PENISDOWN 900
 
@@ -53,28 +62,36 @@ private:
     volatile int _count;
 };
 
-int moymoy(int a, int b, int c, int d);
+//**********************init methods
+void initMotors();
+void checkServos();
+
+//**********************Navigation methods
+
 void corrige(int decombien, int dir, bool enableSensors, int corrpwm, bool bHardStop);
 void reculetoutdroit(int decombien);
-void clignote(int sec);
-void initMotors();
-void checkMotors();
-void resetCounters();
-void updateCounters();
+//Powering the engines
+void power(int motor, int pulse);
 void powerM(int bl, int br, int fl, int fr);
 void powerAll(int pulse);
 void powerAllSkew(int pulse);
+
+int moymoy(int a, int b, int c, int d);
+
+void clignote(int sec);
+
+void resetCounters();
+void updateCounters();
+
 void shutdownM();
 void go(int start, int end, int time, int dir);
 void diaGo(int pwm, int time, int fb, int lr);
 void stop(int start, int end, int time);
-void power(int motor, int pulse);
-int photo();
-void bato();
 
 void waitstart();
 void waitplug();
 
+//***************************Ground Methods
 void match();
 void teamRight();
 void teamLeft();
@@ -90,6 +107,10 @@ void dodgeRight();
 
 void hardStop();
 
+int photo();
+void bato();
+
+//***********************Programming methods
 void sendToRasp(int a);
 void debug(char *array, int truc);
 void printCpts();
@@ -118,23 +139,30 @@ int max(int a, int b);
 int min(int a, int b, int c, int d);
 int max(int a, int b, int c, int d);
 
+
+//Define Pin's status and Values
 PwmOut myled(LED1);
 
+//BackwardLeft Motor
 PwmOut pwmBL(PC_6);
+
 DigitalOut dirBL1(PA_12);
 DigitalOut dirBL2(PA_11);
 Counter counterBL(PC_4);
 
+//BackWardRight Motor
 PwmOut pwmBR(PC_8);
 DigitalOut dirBR1(PA_14);
 DigitalOut dirBR2(PA_13);
 Counter counterBR(PC_2);
 
+//ForwardLeft Motor
 PwmOut pwmFL(D10);
 DigitalOut dirFL1(D8);
 DigitalOut dirFL2(D7);
 Counter counterFL(PB_13);
 
+//FowardRight Motor
 PwmOut pwmFR(D9);
 DigitalOut dirFR1(D4);
 DigitalOut dirFR2(D2);
@@ -150,6 +178,7 @@ DigitalIn startButton(PC_3);
 DigitalIn teamSwitch(PB_12);
 DigitalIn nonameSwitch(PC_5);
 
+//Globals Variables
 int cBL = 0;
 int cBR = 0;
 int cFL = 0;
@@ -180,7 +209,7 @@ int main()
     while (true)
     {
         initMotors();
-        checkMotors();
+        checkServos();
 ////        cBL = counterBL.read();
 ////        cBR = counterBR.read();
 ////        cFL = counterFL.read();
@@ -1129,7 +1158,6 @@ void clignote(int n)
 void initMotors()
 {
     //4 motors initialization
-
     pwmBL.period_us(PERIOD);
     pwmBR.period_us(PERIOD);
     pwmFL.period_us(PERIOD);
@@ -1182,7 +1210,7 @@ void initMotors()
     }
 }
 
-void checkMotors()
+void checkServos()
 {
     setPenis(PENISDOWN);
     setPenis(PENISUP);
